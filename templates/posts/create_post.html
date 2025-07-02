@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create a Post{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'posts/create_post.css' %}">
+<link rel="stylesheet" href="{% static 'posts/style.css' %}">
+{% endblock css %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow" style="background-color: #ff4500; color: #000;">
+    <div class="card-body">
+      <h3 class="mb-4">📝 New Post</h3>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="id_title" class="form-label">Title</label>
+          <input type="text" name="title" maxlength="200" class="form-control" id="id_title" placeholder="Enter your post title" required>
+        </div>
+        <div class="mb-3">
+          <label for="id_content" class="form-label">Content</label>
+          <textarea name="content" rows="6" class="form-control" id="id_content" placeholder="Write your post content here..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-dark">Post</button>
+        <a href="{% url 'index' %}" class="btn btn-secondary ms-2">Cancel</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}

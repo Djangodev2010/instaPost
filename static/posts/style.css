@@ -64,16 +64,16 @@ body {
   color: #fff;
   font-size: 2rem;
   text-align: center;
-  line-height: 55px;
   width: 55px;
   height: 55px;
   border-radius: 50%;
-  text-decoration: none;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   z-index: 1000;
   transition: background-color 0.3s ease;
-}
-
-.fab-plus-btn:hover {
-  background-color: #e03e00;
+  line-height: 55px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  border: none;
 }

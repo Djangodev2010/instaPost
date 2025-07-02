@@ -11,14 +11,22 @@
 {% block content %}
 
 {% for post in posts %}
-  <div class="container mt-4">
+  <div class="container mt-4" id="post-{{ post.id }}">
     <!-- Sample Post -->
     <div class="card text-dark">
       <div class="card-body">
         <a href="{% url 'post_detail' pk=post.id %}" style="text-decoration: none;"><h5 class="card-title">{{post.title | title}}</h5></a>
+        {% if request.user == post.user %}
+        <p class="text-muted" style="font-size: 0.9rem;">
+          Posted by <strong>You</strong> • {{ post.created_on|timesince }} ago
+        </p>
+        {% else %}
+        <p class="text-muted" style="font-size: 0.9rem;">
+          Posted by <strong>{{ post.user.username|truncatechars:10 }}</strong> • {{ post.created_on|timesince }} ago
+        </p>
+        {% endif %}
         <p class="card-text">{{post.content | truncatewords:10}}</p>
-        <p class="text-muted mb-2" style="font-size: 0.9rem;">Posted {{ post.created_on|timesince }} ago</p>
-        <button class="btn btn-sm btn-success">👍🏻</button>
+        <a href="{% url 'like_post' pk=post.id %}"><button class="btn btn-sm btn-success">👍🏻</button></a>
         <button class="btn btn-sm btn-danger">👎🏻</button>
         <button class="btn btn-sm btn-dark">Comment</button>
         <button class="btn btn-sm btn-dark" style="background-color: blue;">Save</button>
@@ -29,8 +37,6 @@
 {% endfor %}
   
   <!-- Floating + Button -->
-  <a href="{% url 'create_post' %}" class="create-btn">
-  +
-  </a>
+  <a href="{% url 'create_post' %}" class="fab-plus-btn">+</a>
   
 {% endblock content %}

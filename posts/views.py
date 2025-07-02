@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import *
 from .models import *
 from django.urls import reverse
@@ -76,9 +76,32 @@ def login_view(request):
     else:
         return render(request, 'posts/login.html')
 
-class CreatePostView(TemplateView):
-    template_name = 'posts/create_post.html'
+def create_post(request):
+    success_url = reverse('index')
+    if request.method == 'POST':
+        user = request.user
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        post = Post.objects.create(user=user, title=title, content=content)
+        return HttpResponseRedirect(success_url)
+
+    else:
+        return render(request, 'posts/create_post.html')
     
 class PostDetailView(DetailView):
     template_name = 'posts/post_detail.html'
     model = Post
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = Post.objects.get(id=self.kwargs['pk'])
+        context['comments'] = Comment.objects.filter(post=post)
+        return context
+
+def like_post(request, pk):
+    success_url = reverse('index')
+    post = get_object_or_404(Post, id=pk)
+    post.likes += 1
+    post.save()
+    return HttpResponseRedirect(f"{request.META.get('HTTP_REFERER')}#post-{post.id}")
+    

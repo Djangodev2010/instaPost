@@ -12,7 +12,7 @@
   <!-- Navigation Bar -->
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">InstaPOST</a>
+      <a class="navbar-brand" href="{% url 'index' %}">InstaPOST</a>
       <div class="d-flex ms-auto align-items-center">
         <!-- Show user info if logged in -->
         <span class="username me-3" style="padding-right: 110px;">Logged in as: <span id="userName">{{user.username}}</span></span>
