@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %} Home Page{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'posts/style.css' %}">
+{% endblock css %}
+
+{% block content %}
+
+{% for post in posts %}
+  <div class="container mt-4">
+    <!-- Sample Post -->
+    <div class="card text-dark">
+      <div class="card-body">
+        <a href="{% url 'post_detail' pk=post.id %}" style="text-decoration: none;"><h5 class="card-title">{{post.title | title}}</h5></a>
+        <p class="card-text">{{post.content | truncatewords:10}}</p>
+        <p class="text-muted mb-2" style="font-size: 0.9rem;">Posted {{ post.created_on|timesince }} ago</p>
+        <button class="btn btn-sm btn-success">👍🏻</button>
+        <button class="btn btn-sm btn-danger">👎🏻</button>
+        <button class="btn btn-sm btn-dark">Comment</button>
+        <button class="btn btn-sm btn-dark" style="background-color: blue;">Save</button>
+      </div>
+    </div>
+  </div>
+
+{% endfor %}
+  
+  <!-- Floating + Button -->
+  <a href="{% url 'create_post' %}" class="create-btn">
+  +
+  </a>
+  
+{% endblock content %}

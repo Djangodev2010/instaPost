@@ -1,0 +1,79 @@
+/* General Body Styles */
+body {
+  background-color: #1a1a1a;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+
+/* Navbar Styling */
+.navbar, .card {
+  background-color: #ff4500;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  color: #fff;
+}
+
+.nav-link,
+.btn {
+  color: #fff;
+}
+
+/* Username Styling */
+.username {
+  font-weight: bold;
+  color: #ffd700;
+}
+
+/* Card Post Styling */
+.card {
+  margin-bottom: 1rem;
+  border: none;
+}
+
+.card-body {
+  background-color: #fff;
+  color: #000;
+}
+
+/* Responsive Display */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none;
+  }
+}
+
+/* Mobile Footer */
+.mobile-only {
+  background-color: #000;
+  border-top: 1px solid #ff4500;
+}
+
+.fab-plus-btn {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  background-color: #ff4500;
+  color: #fff;
+  font-size: 2rem;
+  text-align: center;
+  line-height: 55px;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 1000;
+  transition: background-color 0.3s ease;
+}
+
+.fab-plus-btn:hover {
+  background-color: #e03e00;
+}

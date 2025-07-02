@@ -1,0 +1,56 @@
+/* Post Detail Container */
+.post-detail {
+  background-color: #fff;
+  border-radius: 6px;
+  padding: 20px;
+  margin: 2rem auto;
+  max-width: 700px;
+  color: #000;
+}
+
+/* Post Title */
+.post-detail h2 {
+  font-weight: bold;
+  color: #000;
+}
+
+/* Post Body */
+.post-detail p {
+  margin-bottom: 10px;
+}
+
+/* Timestamp */
+.post-timestamp {
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+/* Like/Dislike/Actions */
+.post-actions button {
+  margin-right: 6px;
+  font-size: 0.6rem;
+}
+
+/* Comments Section */
+.comments-section {
+  background-color: #fff;
+  border-radius: 4px;
+  margin-top: 20px;
+  padding: 15px;
+  color: #000;
+}
+
+.comments-section h4 {
+  margin-bottom: 1rem;
+}
+
+/* Individual Comment */
+.comment {
+  border-top: 1px solid #ccc;
+  padding: 10px 0;
+}
+
+.comment:first-child {
+  border-top: none;
+}
