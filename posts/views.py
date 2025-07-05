@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import *
 from .models import *
 from django.urls import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth import logout, login, authenticate 
 from django.contrib.auth.models import User
 from django.contrib import messages 
@@ -99,9 +99,39 @@ class PostDetailView(DetailView):
         return context
 
 def like_post(request, pk):
-    success_url = reverse('index')
     post = get_object_or_404(Post, id=pk)
-    post.likes += 1
-    post.save()
-    return HttpResponseRedirect(f"{request.META.get('HTTP_REFERER')}#post-{post.id}")
+    if request.user in post.already_disliked.all():
+        post.dislikes -= 1
+        post.already_disliked.remove(request.user)
+        post.save()
     
+    if request.user in post.already_liked.all():
+        post.likes -= 1
+        post.already_liked.remove(request.user)
+        post.save()
+        return JsonResponse({'status': "You removed the like"})
+    
+    else:
+        post.likes += 1
+        post.already_liked.add(request.user)
+        post.save()
+        return JsonResponse({'status': "You liked the post!"})
+    
+def dislike_post(request, pk):
+    post = get_object_or_404(Post, id=pk)
+    if request.user in post.already_liked.all():
+        post.likes -= 1
+        post.already_liked.remove(request.user)
+        post.save()
+    
+    if request.user in post.already_disliked.all():
+        post.dislikes -= 1
+        post.already_disliked.remove(request.user)
+        post.save()
+        return JsonResponse({'status': "You removed the like"})
+    
+    else:
+        post.dislikes += 1
+        post.already_disliked.add(request.user)
+        post.save()
+        return JsonResponse({'status': "You liked the post!"})
