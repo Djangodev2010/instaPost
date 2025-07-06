@@ -10,11 +10,10 @@
 
 {% block content %}
 
-<ul id="posts"></ul>
+<div id="toast" class="toast-message"></div>
 
 {% for post in posts %}
   <div class="container mt-4" id="post-{{post.id}}">
-    <!-- Sample Post -->
     <div class="card text-dark">
       <div class="card-body">
         <a href="{% url 'post_detail' pk=post.id %}" style="text-decoration: none;"><h5 class="card-title">{{post.title | title}}</h5></a>
@@ -28,10 +27,15 @@
         </p>
         {% endif %}
         <p class="card-text">{{post.content | truncatewords:10}}</p>
+        {% if not post.user == request.user%}
         <button class="btn btn-sm btn-success like-btn" data-id="{{post.id}}">👍🏻</button>
         <button class="btn btn-sm btn-danger dislike-btn" data-id="{{post.id}}">👎🏻</button>
-        <button class="btn btn-sm btn-dark">Comment</button>
-        <button class="btn btn-sm btn-dark" style="background-color: blue;">Save</button>
+        <a href="{% url 'add_comment' pk=post.id %}"><button class="btn btn-sm btn-dark">Comment</button></a>
+        <button class="btn btn-sm btn-dark save-btn" style="background-color: blue;" data-id='{{post.id}}'>Save</button>
+        {% else %}
+        <a href="{% url 'add_comment' pk=post.id %}"><button class="btn btn-sm btn-dark">Comment</button></a>
+        <button class="btn btn-sm btn-dark save-btn" style="background-color: blue;" data-id='{{post.id}}'>Save</button>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -42,18 +46,36 @@
   <a href="{% url 'create_post' %}" class="fab-plus-btn">+</a>
   
 {% endblock content %}
-
+  
 {% block script %}
 <script>
+// Toast popup setup
+function showToast(message, color = "#333") {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.style.backgroundColor = color;
+    toast.classList.add("show");
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2500);
+}
+
+// Like button handler
 $(".like-btn").on("click", function(e){
     e.preventDefault();
     const postId = $(this).data("id");
 
     $.ajax({
         method: 'GET',
-        url: `like-post/${postId}`,  // ← Now works!
+        url: `like-post/${postId}`,
         success: function(response){
-            console.log(response);  // You can update UI here
+            console.log(response);
+            if (response.status === 'liked') {
+                showToast("You liked the post 👍", "#28a745");
+            } else if (response.status === 'unliked') {
+                showToast("You removed your like 👎", "#6c757d");
+            }
         },
         error: function(){
             alert("Something went wrong!");
@@ -61,20 +83,44 @@ $(".like-btn").on("click", function(e){
     });
 });
 
+// Dislike button handler
 $(".dislike-btn").on("click", function(e){
     e.preventDefault();
     const postId = $(this).data("id");
 
     $.ajax({
         method: 'GET',
-        url: `dislike-post/${postId}`,  // ← Now works!
+        url: `dislike-post/${postId}`,
         success: function(response){
-            console.log(response);  // You can update UI here
+            console.log(response);
+            if (response.status === 'disliked') {
+                showToast("You disliked the post 👎", "#dc3545");
+            } else if (response.status === 'undisliked') {
+                showToast("You removed your dislike 👍", "#6c757d");
+            }
         },
         error: function(){
             alert("Something went wrong!");
         }
     });
+});
+
+$('.save-btn').on('click', function(e){
+   e.preventDefault();
+   const postId = $(this).data('id')
+   
+   $.ajax({
+       method: 'GET',
+       url: `save-post/${postId}/`,
+       success: function(response){
+           console.log(response);
+           if (response.status === 'saved') {
+                showToast("You saved the post 💾", "green");
+            } else if (response.status === 'unsaved') {
+                showToast("You unsaved the post 💾", "#6c757d");
+            }
+       }
+   });
 });
 </script>
 {% endblock script %}

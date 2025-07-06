@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Add a Comment{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'posts/add_comment.css' %}">
+<link rel="stylesheet" href="{% static 'posts/style.css' %}">
+{% endblock css %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow" style="background-color: #ff4500; color: #000;">
+    <div class="card-body">
+      <h4 class="mb-4">💬 Add Your Comment</h4>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="id_text" class="form-label">Comment</label>
+          <textarea name="content" rows="4" class="form-control" id="id_text" placeholder="Type your thoughts here..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-dark">Post Comment</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}

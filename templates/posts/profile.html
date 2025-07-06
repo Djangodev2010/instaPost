@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Your Profile{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'posts/style.css' %}">
+<link rel="stylesheet" href="{% static 'posts/profile.css' %}">
+{% endblock css %}
+
+{% block content %}
+<div class="container">
+  <div class="profile-card">
+    <h3>👤 {{ user.username }}</h3>
+    <p>Email: {{ user.email }}</p>
+    <a href="{% url 'saved_posts' pk=user.id %}" style="text-decoration: none; color: white;"><strong>💾 Saved Posts</strong></a>
+  </div>
+
+  <div class="profile-posts">
+    <h4 class="text-light mb-3">📦 Your Posts</h4>
+    {% if posts %}
+      {% for post in posts %}
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">{{ post.title|title }}</h5>
+            <p class="card-text">{{ post.content|truncatewords:15 }}</p>
+            <p class="post-meta">Posted by <strong>You</strong> • {{ post.created_on|timesince }} ago</p>
+            <p class="post-meta">{{post.likes}} Likes • {{post.dislikes}} Dislikes</p>
+            <a href="{% url 'post_detail' pk=post.id %}" class="btn btn-sm btn-primary">View</a>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-light">You haven’t posted anything yet. Go ahead and share something!</p>
+    {% endif %}
+  </div>
+</div>
+
+<a href="{% url 'create_post' %}" class="fab-plus-btn">+</a>
+
+{% endblock content %}

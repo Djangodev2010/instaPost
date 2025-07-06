@@ -8,9 +8,10 @@ class Post(models.Model):
     title = models.CharField(max_length=200)
     content = models.CharField(max_length=600, null=True)
     likes = models.IntegerField(default=0)
-    already_liked = models.ManyToManyField(User, related_name='already_liked')
-    already_disliked = models.ManyToManyField(User, related_name='already_disliked')
+    liked_by = models.ManyToManyField(User, related_name='liked_by')
+    disliked_by = models.ManyToManyField(User, related_name='disliked_by')
     dislikes = models.IntegerField(default=0)
+    saved_by = models.ManyToManyField(User, related_name='saved_by')
     no_of_comment = models.IntegerField(default=0)
     created_on = models.DateTimeField(auto_now_add=True)
     
@@ -19,9 +20,6 @@ class Post(models.Model):
         
     def get_like_count(self):
         return self.likes
-    
-    def liked_by(self, user):
-        return self.already_liked.filter(id=user.id).exists()
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -35,14 +33,7 @@ class Comment(models.Model):
 class Account(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    posts = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
+    posts = models.ManyToManyField(Post, related_name='your_posts')
     
     def __str__(self):
         return self.user.username
-
-class SavedPost(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return self.post.title

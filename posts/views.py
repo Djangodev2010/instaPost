@@ -6,10 +6,12 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth import logout, login, authenticate 
 from django.contrib.auth.models import User
 from django.contrib import messages 
-
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
+@method_decorator(login_required, name='dispatch')
 class HomeView(ListView):
     template_name = 'posts/index.html'
     model = Post
@@ -76,6 +78,7 @@ def login_view(request):
     else:
         return render(request, 'posts/login.html')
 
+@method_decorator(login_required, name='dispatch')
 def create_post(request):
     success_url = reverse('index')
     if request.method == 'POST':
@@ -87,7 +90,8 @@ def create_post(request):
 
     else:
         return render(request, 'posts/create_post.html')
-    
+
+@method_decorator(login_required, name='dispatch')
 class PostDetailView(DetailView):
     template_name = 'posts/post_detail.html'
     model = Post
@@ -98,40 +102,91 @@ class PostDetailView(DetailView):
         context['comments'] = Comment.objects.filter(post=post)
         return context
 
+@method_decorator(login_required, name='dispatch')
 def like_post(request, pk):
     post = get_object_or_404(Post, id=pk)
-    if request.user in post.already_disliked.all():
+    if request.user in post.disliked_by.all():
         post.dislikes -= 1
-        post.already_disliked.remove(request.user)
+        post.disliked_by.remove(request.user)
         post.save()
     
-    if request.user in post.already_liked.all():
+    if request.user in post.liked_by.all():
         post.likes -= 1
-        post.already_liked.remove(request.user)
+        post.liked_by.remove(request.user)
         post.save()
-        return JsonResponse({'status': "You removed the like"})
+        return JsonResponse({'status': "unliked"})
     
     else:
         post.likes += 1
-        post.already_liked.add(request.user)
+        post.liked_by.add(request.user)
         post.save()
-        return JsonResponse({'status': "You liked the post!"})
-    
+        return JsonResponse({'status': "liked"})
+
+@method_decorator(login_required, name='dispatch')
 def dislike_post(request, pk):
     post = get_object_or_404(Post, id=pk)
-    if request.user in post.already_liked.all():
+    if request.user in post.liked_by.all():
         post.likes -= 1
-        post.already_liked.remove(request.user)
+        post.liked_by.remove(request.user)
         post.save()
     
-    if request.user in post.already_disliked.all():
+    if request.user in post.disliked_by.all():
         post.dislikes -= 1
-        post.already_disliked.remove(request.user)
+        post.disliked_by.remove(request.user)
         post.save()
-        return JsonResponse({'status': "You removed the like"})
+        return JsonResponse({'status': "undisliked"})
     
     else:
         post.dislikes += 1
-        post.already_disliked.add(request.user)
+        post.disliked_by.add(request.user)
         post.save()
-        return JsonResponse({'status': "You liked the post!"})
+        return JsonResponse({'status': "disliked"})
+
+@method_decorator(login_required, name='dispatch')
+def save_post(request, pk):
+    post = get_object_or_404(Post, id=pk)
+    if request.user in post.saved_by.all():
+        post.saved_by.remove(request.user)
+        post.save()
+        return JsonResponse({'status': 'unsaved'})
+    
+    else:
+        post.saved_by.add(request.user)
+        post.save()
+        return JsonResponse({'status': 'saved'})
+
+@method_decorator(login_required, name='dispatch')
+def add_comment(request, pk):
+    success_url = reverse('post_detail', kwargs={'pk': pk})
+    if request.method == 'POST':
+        post = get_object_or_404(Post, id=pk)
+        content = request.POST.get('content')
+        if Comment.objects.filter(user=request.user, post=post):
+            messages.error(request, 'You already have a comment on this post!')
+            return HttpResponseRedirect(success_url)
+        else:
+            comment = Comment.objects.create(user=request.user, content=content, post=post)
+            comment.save()
+            messages.success(request, 'Comment added successfully!')
+            return HttpResponseRedirect(success_url)
+    
+    else:
+        return render(request, 'posts/add_comment.html')
+
+@method_decorator(login_required, name='dispatch')
+class ProfileView(DetailView):
+    template_name = 'posts/profile.html'
+    model = User
+    context_object_name = 'user'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['posts'] = Post.objects.filter(user=self.request.user)
+        return context
+
+@method_decorator(login_required, name='dispatch')
+def saved_posts(request, pk):
+    user = get_object_or_404(User, id=pk)
+    posts = Post.objects.filter(saved_by=user)
+    return render(request, 'posts/index.html', {'posts': posts})
+

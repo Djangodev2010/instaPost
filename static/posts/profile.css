@@ -1,0 +1,31 @@
+/* Profile Card Styles */
+.profile-card {
+  background-color: #ff4500;
+  color: #000;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 2rem auto;
+  max-width: 700px;
+}
+
+/* Profile Heading */
+.profile-card h3 {
+  font-weight: bold;
+}
+
+/* Post Section */
+.profile-posts {
+  margin-top: 30px;
+}
+
+/* Individual Post Card */
+.profile-posts .card-body {
+  background-color: #fff;
+  color: #000;
+}
+
+/* Timestamp Styling */
+.post-meta {
+  font-size: 0.9rem;
+  color: #555;
+}

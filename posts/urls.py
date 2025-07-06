@@ -17,6 +17,16 @@ urlpatterns = [
     
     path('like-post/<int:pk>', views.like_post, name='like_post'),
     
-    path('dislike-post/<int:pk>', views.dislike_post, name='like_post')
+    path('dislike-post/<int:pk>/', views.dislike_post, name='like_post'),
+    
+    path('save-post/<int:pk>/', views.save_post, name='save_post'),
+    
+    path('add-comment/<int:pk>/', views.add_comment, name='add_comment'),
+    
+    path('profile/<int:pk>/', ProfileView.as_view(), name='profile'),
+    
+    path('post/save-post/<int:pk>/', save_post, name='save_detail_post'),
+    
+    path('<int:pk>/saved-posts/', views.saved_posts, name='saved_posts')
     
 ]
